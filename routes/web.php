@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\LandingPageController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -19,6 +20,8 @@ Route::get('/dashboard', function () {
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('users', UserController::class)->middleware('role:Admin');
 });
+
+Route::get('/gallery', [LandingPageController::class,'gallery'])->name('gallery');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
