@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PoolTableController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
@@ -18,6 +19,7 @@ Route::get('/dashboard', function () {
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('users', UserController::class)->middleware('role:Admin');
+    Route::resource('pool_tables', PoolTableController::class)->middleware(['role:Admin|Kasir']);
 });
 
 Route::middleware('auth')->group(function () {
@@ -31,5 +33,6 @@ Route::post('/admin/users/{user}/reset-password', [UserController::class, 'reset
 
 // Get data ajax
 Route::get('/users-data', [UserController::class, 'getUsers'])->name('admin.users.data');
+Route::get('/pool-tables-data', [PoolTableController::class, 'getPoolTables'])->name('admin.poolTables.data');
 
 require __DIR__.'/auth.php';

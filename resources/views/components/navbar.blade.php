@@ -44,7 +44,7 @@
 </nav>
 
 <!-- Mobile bottom bar -->
-<div class="fixed inset-x-0 bottom-0 flex items-center justify-between px-4 py-4 sm:px-6 transition-transform duration-500 bg-white md:hidden"
+<div class="fixed inset-x-0 bottom-0 z-10 flex items-center justify-between px-4 py-4 sm:px-6 transition-transform duration-500 bg-white md:hidden"
     :class="{
         'translate-y-full': scrollingDown,
         'translate-y-0': scrollingUp,

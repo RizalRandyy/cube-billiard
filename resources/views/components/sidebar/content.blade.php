@@ -20,6 +20,12 @@
     </x-sidebar.link>
     @endif
 
+    <x-sidebar.link title="Meja Biliar" href="{{ route('admin.pool_tables.index') }}" :isActive="request()->routeIs('admin.pool_tables*')" >
+        <x-slot name="icon">
+            <x-icons.billiards class="flex-shrink-0 w-6 h-6" aria-hidden="true" />
+        </x-slot>
+    </x-sidebar.link>
+
     
 
 </x-perfect-scrollbar>
