@@ -171,6 +171,125 @@
     </body>
 </html> --}}
 
-<x-guest-layout>
-    
+<x-guest-layout>  
+
+<!-- Konten Welcome -->
+<div class="w-full mt-24 px-4 md:px-8 text-center">
+    <h1 class="text-4xl font-bold mb-4 text-gray-800 dark:text-white">Selamat Datang di Cube Billiard</h1>
+    <p class="text-lg text-gray-600 dark:text-gray-300 mb-8">
+        Cube Billiard adalah tempat terbaik untuk bermain billiard dengan suasana nyaman, fasilitas lengkap, dan harga terjangkau. Temukan pengalaman bermain yang seru bersama teman atau keluarga!
+    </p>
+    <div class="flex flex-col md:flex-row justify-center gap-6 mb-8">
+        <div class="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6 flex-1">
+            <h2 class="text-2xl font-semibold mb-2 text-[#FF2D20]">Fasilitas Lengkap</h2>
+            <p class="text-gray-700 dark:text-gray-300">Tersedia meja billiard berkualitas, area lounge, makanan & minuman, serta WiFi gratis.</p>
+        </div>
+        <div class="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6 flex-1">
+            <h2 class="text-2xl font-semibold mb-2 text-[#FF2D20]">Promo Menarik</h2>
+            <p class="text-gray-700 dark:text-gray-300">Dapatkan promo spesial setiap minggu dan diskon untuk member baru!</p>
+        </div>
+        <div class="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6 flex-1">
+            <h2 class="text-2xl font-semibold mb-2 text-[#FF2D20]">Lokasi Strategis</h2>
+            <p class="text-gray-700 dark:text-gray-300">Mudah dijangkau di pusat kota, dengan area parkir luas dan aman.</p>
+        </div>
+    </div>
+    <a href="{{ route('register') }}" class="inline-block bg-[#FF2D20] text-white px-8 py-3 rounded-full font-semibold shadow hover:bg-red-700 transition">
+        Daftar Member Sekarang
+    </a>
+</div>
+
+<div class="w-full mt-16 px-4 md:px-8">
+    <div class="grid md:grid-cols-2 gap-8">
+        <div class="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6 flex flex-col items-center">
+            <img src="https://images.unsplash.com/photo-1519864600265-abb23847ef2c?auto=format&fit=crop&w=400&q=80" alt="Kompetisi Billiard" class="rounded-md mb-4 w-full h-40 object-cover">
+            <h3 class="text-xl font-semibold mb-2 text-[#FF2D20]">Kompetisi & Event Rutin</h3>
+            <p class="text-gray-700 dark:text-gray-300 text-center">Ikuti turnamen billiard seru setiap bulan dan menangkan hadiah menarik! Pantau jadwal event terbaru di sosial media kami.</p>
+        </div>
+        <div class="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6 flex flex-col items-center">
+            <img src="{{ asset('assets/images/landing-page-user/waitinglist.jpg') }}">
+            <h3 class="text-xl font-semibold mb-2 text-[#FF2D20]">Cafe & Lounge Nyaman</h3>
+            <p class="text-gray-700 dark:text-gray-300 text-center">Nikmati berbagai pilihan makanan dan minuman lezat di area cafe kami. Tempat yang pas untuk nongkrong santai bersama teman.</p>
+        </div>
+    </div>
+
+  <div class="container mx-auto mt-8 flex flex-wrap justify-center gap-6">
+    <div class="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-4 flex items-center gap-3 w-60 justify-center hover:shadow-xl transition">
+        <a href="#jadwal" class="flex items-center gap-2 text-[#FF2D20] font-semibold">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor"/><path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" stroke-linecap="round"/></svg>
+            Jadwal Turnamen
+        </a>
+    </div>
+    <div class="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-4 flex items-center gap-3 w-60 justify-center hover:shadow-xl transition">
+        <a href="#daftar" class="flex items-center gap-2 text-[#FF2D20] font-semibold">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="7" r="4" stroke="currentColor"/><path d="M17 11v6M20 14h-6M5 21v-2a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v2" stroke="currentColor" stroke-linecap="round"/></svg>
+            Daftar Member
+        </a>
+    </div>
+    <div class="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-4 flex items-center gap-3 w-60 justify-center hover:shadow-xl transition">
+        <a href="{{ route('gallery') }}" class="flex items-center gap-2 text-[#FF2D20] font-semibold">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor"/><circle cx="8.5" cy="8.5" r="1.5" stroke="currentColor"/><path d="M21 15l-5-5L5 21" stroke="currentColor" stroke-linecap="round"/></svg>
+            Gallery
+        </a>
+    </div>
+    <div class="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-4 flex items-center gap-3 w-60 justify-center hover:shadow-xl transition">
+        <a href="#kontak" class="flex items-center gap-2 text-[#FF2D20] font-semibold">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.72 19.72 0 0 1 3.08 5.18 2 2 0 0 1 5 3h3a2 2 0 0 1 2 1.72c.13.81.36 1.6.7 2.34a2 2 0 0 1-.45 2.11l-1.27 1.27a16 16 0 0 0 6.29 6.29l1.27-1.27a2 2 0 0 1 2.11-.45c.74.34 1.53.57 2.34.7A2 2 0 0 1 22 16.92z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Kontak
+        </a>
+    </div>
+</div>
+
+    <!-- Gallery Pemenang Turnamen -->
+    <div class="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6 mt-8">
+        <h3 class="text-xl font-semibold mb-4 text-[#FF2D20] text-center">Gallery Pemenang Turnamen</h3>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div>
+                <img src="{{ asset('assets/images/landing-page-user/s2.jpg') }}" alt="Pemenang 1" class="rounded-md h-40 w-full object-cover mb-2">
+                <div class="text-center text-sm font-semibold text-gray-700 dark:text-gray-300">Juara Season 2</div>
+            </div>
+            <div>
+                <img src="{{ asset('assets/images/landing-page-user/s3.jpg') }}" alt="Pemenang 2" class="rounded-md h-40 w-full object-cover mb-2">
+                <div class="text-center text-sm font-semibold text-gray-700 dark:text-gray-300">Juara Season 3</div>
+            </div>
+            <div>
+                <img src="{{ asset('assets/images/landing-page-user/s4.jpg') }}"  alt="Pemenang 3" class="rounded-md h-40 w-full object-cover mb-2">
+                <div class="text-center text-sm font-semibold text-gray-700 dark:text-gray-300">Juara Season 4</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6 mt-8 flex flex-col items-center">
+        <h3 class="text-xl font-semibold mb-2 text-[#FF2D20]">Testimoni Pengunjung</h3>
+        <div class="text-gray-700 dark:text-gray-300 italic mb-2">"Tempatnya nyaman, pelayanannya ramah, dan fasilitasnya lengkap. Pasti balik lagi!"</div>
+        <div class="text-gray-700 dark:text-gray-300 italic mb-2">"Event turnamennya seru, cocok buat kumpul bareng komunitas billiard."</div>
+        <div class="text-gray-700 dark:text-gray-300 italic">"Cafe-nya enak, harga terjangkau. Recommended banget!"</div>
+    </div>
+</div>
+
+
+
+<!-- Kontak & Sosial Media -->
+<div class="w-full px-4 md:px-8 mt-16 text-center">
+    <h2 class="text-3xl font-bold mb-4 text-gray-800 dark:text-white">Tetap Terhubung dengan Kami</h2>
+    <h3 class="text-2xl font-semibold mb-2 text-gray-800 dark:text-white">Hubungi & Kunjungi Kami</h3>
+    <p class="text-gray-700 dark:text-gray-300 mb-4">
+        Kp. Cijeruk Jl. Pasir Handap No.1 Lembang<br>
+        Telp/WA: <a href="https://wa.me/6281809149351" class="text-[#FF2D20] underline">0812-3456-7890</a>
+    </p>
+    <div class="flex justify-center gap-6 mt-4">
+        <a href="https://instagram.com/cubebilliardlbg" target="_blank" class="text-[#FF2D20] hover:text-red-700 transition text-2xl" aria-label="Instagram">
+            <!-- SVG Instagram -->
+            <svg class="inline w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2zm0 1.5A4.25 4.25 0 0 0 3.5 7.75v8.5A4.25 4.25 0 0 0 7.75 20.5h8.5a4.25 4.25 0 0 0 4.25-4.25v-8.5A4.25 4.25 0 0 0 16.25 3.5zm4.25 3.25a5.25 5.25 0 1 1 0 10.5 5.25 5.25 0 0 1 0-10.5zm0 1.5a3.75 3.75 0 1 0 0 7.5 3.75 3.75 0 0 0 0-7.5zm5.25.75a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
+        </a>
+        <a href="https://facebook.com/cubebilliard" target="_blank" class="text-[#FF2D20] hover:text-red-700 transition text-2xl" aria-label="Facebook">
+            <!-- SVG Facebook -->
+            <svg class="inline w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.5 9.95v-7.05h-2v-2.9h2v-2.2c0-2 1.2-3.1 3-3.1.87 0 1.78.16 1.78.16v2h-1c-.99 0-1.3.62-1.3 1.25v1.89h2.22l-.36 2.9h-1.86v7.05A10 10 0 0 0 22 12z"/></svg>
+        </a>
+        <a href="mailto:info@cubebilliard.com" class="text-[#FF2D20] hover:text-red-700 transition text-2xl" aria-label="Email">
+            <!-- SVG Email -->
+            <svg class="inline w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M2 4.75A2.75 2.75 0 0 1 4.75 2h14.5A2.75 2.75 0 0 1 22 4.75v14.5A2.75 2.75 0 0 1 19.25 22H4.75A2.75 2.75 0 0 1 2 19.25V4.75zm2.75-.25a.75.75 0 0 0-.75.75v.638l8 5.333 8-5.333V5.25a.75.75 0 0 0-.75-.75H4.75zm15.5 2.612-7.47 4.98a.75.75 0 0 1-.81 0L3.25 7.112V19.25c0 .414.336.75.75.75h14.5a.75.75 0 0 0 .75-.75V7.112z"/></svg>
+        </a>
+    </div>
+</div>
+
 </x-guest-layout>
