@@ -7,6 +7,13 @@ import collapse from '@alpinejs/collapse'
 import { Notyf } from 'notyf';
 import 'notyf/notyf.min.css';
 import Swal from 'sweetalert2';
+import "flatpickr/dist/flatpickr.min.css";
+import { Indonesian } from "flatpickr/dist/l10n/id.js";
+import flatpickr from "flatpickr"; 
+
+window.Flatpickr = flatpickr; 
+
+window.Indonesian = Indonesian;
 
 window.Swal = Swal;
 

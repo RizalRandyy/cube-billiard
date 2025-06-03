@@ -8,13 +8,16 @@
 
     <title>Cube Billiard</title>
     <link rel="icon" href="{{ asset('assets/images/logo.png') }}" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
-    <!-- Scripts -->
+    @stack('styles')
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
 </head>
 
 <body class="font-sans text-gray-900 antialiased">
-    <div class="flex flex-col min-h-screen text-gray-900 bg-gray-100 dark:bg-dark-eval-0 dark:text-gray-200">
+    <div class="flex flex-col min-h-screen text-gray-900">
         @php
             $excludedRoutes = ['login', 'register', 'password.request', 'password.reset'];
         @endphp
@@ -23,9 +26,15 @@
             @include('layouts.user-navigation')
         @endif
         {{ $slot }}
+
+        <x-user.footer></x-user.footer>
     </div>
 
     <script src="{{ asset('assets/js/jquery.js') }}"></script>
+    <script>
+        window.flashMessage = @json(session('success') ?? null);
+    </script>
+
     @stack('scripts')
 </body>
 
