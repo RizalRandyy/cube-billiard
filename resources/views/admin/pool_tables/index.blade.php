@@ -11,7 +11,7 @@
     <!-- Grid Layout -->
     <div class="p-6 overflow-hidden bg-white rounded-md shadow-md">
         <div class="overflow-x-auto w-full">
-            <div id="layout" class="grid grid-cols-[repeat(16,_minmax(0,_1fr))] gap-[8px] w-max">
+            <div id="layout" class="grid grid-cols-[repeat(8,_minmax(0,_1fr))] gap-2 w-max md:w-full">
                 <!-- Slots akan di-generate dengan JS -->
             </div>
         </div>
@@ -146,31 +146,29 @@
                         y: 'top'
                     }
                 });
-                const layout = $('#layout'),
-                    modal = $('#modal'),
-                    positionXInput = $('#positionX'),
-                    positionYInput = $('#positionY');
-                const rows = 8,
-                    cols = 16,
-                    slots = {};
-
+                
                 // Ambil data awal
                 $.get('/pool-tables-data', data => {
                     data.forEach(item => renderPoolTables(item.name, item.x, item.y, item.orientation, item.id,
                         item.price_per_hour, item.status));
                 });
 
+                const layout = $('#layout'),
+                    modal = $('#modal'),
+                    positionXInput = $('#positionX'),
+                    positionYInput = $('#positionY');
+                const rows = 8,
+                    cols = 5,
+                    slots = {};
+
                 // Generate grid
-                for (let y = 0; y < rows; y++) {
-                    for (let x = 0; x < cols; x++) {
+                for (let y = 0; y < cols; y++) {
+                    for (let x = 0; x < rows; x++) {
                         const key = `${x},${y}`,
-                            isEntrance = x === 15 && y === 7;
+                            isEntrance = x === 7 && y === 4;
                         const slot = $('<div></div>')
-                            // .addClass(
-                            //     `border border-gray-400 w-[64px] h-[64px] flex items-center justify-center text-xs rounded ${isEntrance ? 'bg-green-600 text-white font-bold' : 'bg-white hover:bg-blue-100 cursor-pointer'}`
-                            // )
                             .addClass(
-                                `border-none w-[64px] h-[64px] flex items-center justify-center text-xs rounded ${isEntrance ? 'bg-green-600 text-white font-bold' : 'bg-white hover:bg-blue-100 cursor-pointer'}`
+                                `border-none w-[128px] h-[128px] flex items-center justify-center text-xs rounded ${isEntrance ? 'text-white font-bold' : 'bg-white hover:bg-blue-100 cursor-pointer'}`
                             )
                             .attr({
                                 'data-x': x,
@@ -179,12 +177,22 @@
                             // .text(isEntrance ? 'PINTU' : `(${x},${y})`);
                             .text(isEntrance ? 'PINTU' : ``);
 
-                        if (!isEntrance) slot.on('click', () => {
-                            positionXInput.val(x);
-                            positionYInput.val(y);
-                            toggleModal(true);
-                        });
-                        else slot.css('cursor', 'not-allowed');
+                        if (!isEntrance) {
+                            slot.on('click', function() {
+                                const key = `${x},${y}`;
+                                const slotHasPoolTable = slots[key].find('[data-id]').length > 0;
+
+                                if (slotHasPoolTable) return; // Jangan buka form tambah jika sudah ada meja
+
+                                positionXInput.val(x);
+                                positionYInput.val(y);
+                                toggleModal(true);
+                            });
+                        } else {
+                            slot.html(
+                                '<span class="text-xs px-5 py-5 bg-green-600 rounded">PINTU</span>');
+                            slot.css('cursor', 'not-allowed');
+                        };
 
                         slots[key] = slot;
                         layout.append(slot);
@@ -247,33 +255,15 @@
                         y = +$('#positionY').val(),
                         orientation = $('#orientation').val();
                     const price = parseInt($('#price_per_hour').val().replace(/[^\d]/g, ''), 10);
-                    let key1 = `${x},${y}`;
-                    let key2;
-
-                    if (orientation === 'horizontal') {
-                        if (x + 1 >= cols) {
-                            notyf.error('Tidak cukup ruang.');
-                            return;
-                        }
-                        key2 = `${x + 1},${y}`;
-                    } else {
-                        if (y + 1 >= rows) {
-                            notyf.error('Tidak cukup ruang.');
-                            return;
-                        }
-                        key2 = `${x},${y + 1}`;
-                    }
+                    let key = `${x},${y}`;
 
                     const currentId = id ? parseInt(id) : null;
-                    const slotHasOtherTable = [key1, key2].some(key => {
-                        const existing = slots[key].find('[data-id]');
-                        return existing.length && parseInt(existing.attr('data-id')) !== currentId;
-                    });
-
-                    if (slotHasOtherTable) {
+                    const existing = slots[key].find('[data-id]' ?? null);
+                    if (existing.length && parseInt(existing.attr('data-id')) !== currentId) {
                         notyf.error('Posisi ini sudah ditempati meja lain.');
                         return;
                     }
+
 
 
                     const submitBtn = $('.submit-btn');
@@ -297,41 +287,6 @@
                         method: 'POST',
                         data: payload,
                         success: res => {
-                            // Jika update, hapus meja lama dulu
-                            if (id) {
-                                const oldX = +form.data('old-x'),
-                                    oldY = +form.data('old-y'),
-                                    oldOrientation = form.data('old-orientation');
-
-                                const oldKey1 = `${oldX},${oldY}`,
-                                    oldKey2 = oldOrientation === 'horizontal' ?
-                                    `${oldX + 1},${oldY}` : `${oldX},${oldY + 1}`;
-
-                                [slots[oldKey1], slots[oldKey2]].forEach((slot, idx) => {
-                                    const slotX = oldX + (idx === 1 && oldOrientation ===
-                                        'horizontal' ? 1 : 0);
-                                    const slotY = oldY + (idx === 1 && oldOrientation ===
-                                        'vertical' ? 1 : 0);
-
-                                    // slot.empty().removeClass().addClass(
-                                    //     "border border-gray-400 w-[64px] h-[64px] flex items-center justify-center text-xs rounded cursor-pointer hover:bg-blue-100"
-                                    // ).text(`(${slotX},${slotY})`).off('click').on(
-                                    //     'click', () => {
-                                    //         positionXInput.val(slotX);
-                                    //         positionYInput.val(slotY);
-                                    //         toggleModal(true);
-                                    //     });
-
-                                    slot.empty().removeClass().addClass(
-                                        "border-none w-[64px] h-[64px] flex items-center justify-center text-xs rounded cursor-pointer hover:bg-blue-100"
-                                    ).off('click').on(
-                                        'click', () => {
-                                            positionXInput.val(slotX);
-                                            positionYInput.val(slotY);
-                                            toggleModal(true);
-                                        });
-                                });
-                            }
 
                             // Render ulang meja yang baru
                             renderPoolTables(payload.name, x, y, orientation, id || res.id, price,
@@ -339,9 +294,6 @@
 
                             // Tutup modal
                             toggleModal(false);
-
-                            // Hapus data posisi lama agar tidak tertinggal
-                            form.removeData('old-x old-y old-orientation');
 
                             // Notifikasi
                             notyf.success(res.message);
@@ -406,21 +358,16 @@
                                     _method: 'DELETE'
                                 },
                                 success: res => {
-                                    const key1 = `${x},${y}`,
-                                        key2 = orientation === 'horizontal' ?
-                                        `${x + 1},${y}` : `${x},${y + 1}`;
-                                    [slots[key1], slots[key2]].forEach((slot, idx) => {
-                                        // slot.empty().removeClass().addClass(
-                                        //         "border border-gray-400 w-[64px] h-[64px] flex items-center justify-center text-xs rounded cursor-pointer hover:bg-blue-100"
-                                        //     )
-                                        //     .text(
-                                        //         `(${idx === 0 ? x : x + (orientation === 'horizontal' ? 1 : 0)},${idx === 0 ? y : y + (orientation === 'vertical' ? 1 : 0)})`
-                                        //     );
 
+                                    // Hapus elemen meja dari layout
+                                    const key = `${x},${y}`;
+                                    const slot = slots[key];
+                                    if (slot) {
                                         slot.empty().removeClass().addClass(
-                                                "border-none w-[64px] h-[64px] flex items-center justify-center text-xs rounded cursor-pointer hover:bg-blue-100"
-                                            );
-                                    });
+                                            "border-none w-[128px] h-[128px] flex items-center justify-center text-xs rounded cursor-pointer hover:bg-blue-100"
+                                        );
+                                    }
+
                                     toggleModal(false);
                                     notyf.success(res.message || 'Data berhasil dihapus.');
                                 },
@@ -437,26 +384,31 @@
 
                 // Render meja
                 function renderPoolTables(name, x, y, orientation, id = null, price = '', status = '') {
-                    const key1 = `${x},${y}`,
-                        key2 = orientation === 'horizontal' ? `${x + 1},${y}` : `${x},${y + 1}`;
-                    const slot1 = slots[key1],
-                        slot2 = slots[key2];
-                    slot1.empty().removeClass().addClass('relative h-16 w-16');
-                    slot2.empty().addClass('invisible pointer-events-none bg-gray-100 hover:bg-blue-100');
+                    const key = `${x},${y}`;
+                    const slot = slots[key];
+
+                    slot.empty().removeClass().addClass('relative w-[128px] h-[128px]');
+
+                    const picture = status == '1' ? 'meja-biru-horizontal.png' : 'meja-putih-horizontal.png';
 
                     const wrapper = $(`
-                        <div class="absolute top-0 left-0 flex cursor-pointer ${orientation === 'horizontal' ? 'w-[136px] h-[64px]' : 'w-[64px] h-[136px]'}"
+                        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
+                                    flex cursor-pointer w-[96px] h-[48px] ${orientation === 'vertical' ? 'rotate-90' : ''}"
                             data-id="${id}" data-name="${name}" data-x="${x}" data-y="${y}" data-orientation="${orientation}" 
                             data-price_per_hour="${parseInt(price)}" data-status="${status}" onclick="editMeja(this)">
-                            <img src="/assets/images/meja-biru-${orientation}.png" alt="${name}" class="object-contain w-full h-full">
+                            <img src="/assets/images/${picture}" alt="${name}" class="object-contain w-full h-full">
                         </div>
                     `);
 
-                    const label = $(
-                        `<div class="absolute top-0 left-0 bg-black bg-opacity-50 text-white text-xs px-1 rounded pointer-events-none">${name}</div>`
-                    );
-                    slot1.append(wrapper).append(label);
+                    const label = $(`
+                        <div class="absolute top-1 left-1 bg-black bg-opacity-50 text-white text-xs px-1 rounded pointer-events-none">
+                            ${name}
+                        </div>
+                    `);
+
+                    slot.append(wrapper).append(label);
                 }
+
 
                 // Edit meja
                 window.editMeja = function(el) {
@@ -471,10 +423,6 @@
                     $('.modal-title').text('Edit Meja Biliar');
                     $('.delete-btn').removeClass('invisible');
                     toggleModal(true);
-
-                    $('#formMeja').data('old-x', $el.data('x'));
-                    $('#formMeja').data('old-y', $el.data('y'));
-                    $('#formMeja').data('old-orientation', $el.data('orientation'));
                 }
 
                 // Format harga per jam

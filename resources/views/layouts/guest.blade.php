@@ -25,9 +25,12 @@
         @if (!in_array(Route::currentRouteName(), $excludedRoutes))
             @include('layouts.user-navigation')
         @endif
+
         {{ $slot }}
 
-        <x-user.footer></x-user.footer>
+        @if (!in_array(Route::currentRouteName(), $excludedRoutes))
+            <x-user.footer></x-user.footer>
+        @endif
     </div>
 
     <script src="{{ asset('assets/js/jquery.js') }}"></script>

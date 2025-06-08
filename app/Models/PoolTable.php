@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
+use App\Models\Booking;
 use Illuminate\Database\Eloquent\Model;
 
-class PoolTableModel extends Model
+class PoolTable extends Model
 {
-
     protected $table = 'pool_tables';
     protected $fillable = [
         'name',
@@ -16,4 +16,9 @@ class PoolTableModel extends Model
         'y',
         'orientation'
     ];
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
 }

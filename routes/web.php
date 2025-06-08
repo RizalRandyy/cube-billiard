@@ -1,14 +1,16 @@
 <?php
 
-use App\Http\Controllers\PoolTableController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PoolTableController;
 use App\Http\Controllers\LandingPageController;
+use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\BookingGroupsController;
+use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('/');
+Route::get('/', [LandingPageController::class, 'index'])->name('/');
 
 // Route::get('/dashboard', function () {
 //     return view('dashboard');
@@ -29,13 +31,24 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::resource('bookings', BookingController::class)->middleware(['role:User|Kasir']);
+    Route::resource('booking_groups', BookingGroupsController::class)->middleware(['role:User|Kasir']);
+    // Route::resource('transaction', TransactionController::class)->middleware(['role:User|Kasir']);
 });
 
 // Post data ajax
 Route::post('/admin/users/{user}/reset-password', [UserController::class, 'resetPassword'])->name('admin.users.reset-password');
 
+Route::post('/midtrans/callback', [TransactionController::class, 'handleCallback'])
+    ->withoutMiddleware([ValidateCsrfToken::class]);
+
+
 // Get data ajax
 Route::get('/users-data', [UserController::class, 'getUsers'])->name('admin.users.data');
 Route::get('/pool-tables-data', [PoolTableController::class, 'getPoolTables'])->name('admin.poolTables.data');
 
+Route::get('/transaction-data', [TransactionController::class, 'store'])->name('transaction.data');
+
 require __DIR__.'/auth.php';
+

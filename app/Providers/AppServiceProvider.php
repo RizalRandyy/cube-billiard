@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Spatie\Permission\Middleware\RoleMiddleware;
@@ -24,6 +25,9 @@ class AppServiceProvider extends ServiceProvider
         Route::middleware('web')
             ->group(base_path('routes/web.php'));
 
-        app('router')->aliasMiddleware('role',RoleMiddleware::class);
+        app('router')->aliasMiddleware('role', RoleMiddleware::class);
+
+        Carbon::setLocale('id');
+        setlocale(LC_TIME, 'id_ID.UTF-8');
     }
 }

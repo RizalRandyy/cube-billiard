@@ -4,8 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePoolTableRequest;
 use App\Http\Requests\UpdatePoolTableRequest;
-use App\Models\PoolTableModel;
-use Illuminate\Http\Request;
+use App\Models\PoolTable;
 
 class PoolTableController extends Controller
 {
@@ -27,7 +26,7 @@ class PoolTableController extends Controller
 
     public function getPoolTables()
     {
-        return response()->json(PoolTableModel::all());
+        return response()->json(PoolTable::all());
     }
 
     /**
@@ -39,7 +38,7 @@ class PoolTableController extends Controller
 
         $validatedData['price_per_hour'] = (int) str_replace('.', '', $request->price_per_hour);
 
-        $poolTable = PoolTableModel::create($validatedData);
+        $poolTable = PoolTable::create($validatedData);
 
         return response()->json(['message' => 'Berhasil disimpan', 'id' => $poolTable->id], 201);
     }
@@ -69,7 +68,7 @@ class PoolTableController extends Controller
 
         $validatedData['price_per_hour'] = (int) str_replace('.', '', $request->price_per_hour);
 
-        $poolTable = PoolTableModel::findOrFail($id);
+        $poolTable = PoolTable::findOrFail($id);
 
         $poolTable->update([
             'name' => $validatedData['name'],
@@ -88,7 +87,7 @@ class PoolTableController extends Controller
      */
     public function destroy($id)
     {
-        $poolTable = PoolTableModel::findOrFail($id);
+        $poolTable = PoolTable::findOrFail($id);
         $poolTable->delete();
 
         return response()->json(['message' => 'Meja biliar berhasil dihapus.'], 201);

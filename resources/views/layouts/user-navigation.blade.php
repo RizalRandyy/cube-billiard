@@ -2,47 +2,59 @@
 <nav class="bg-white fixed w-full z-20 top-0 start-0 border-b border-gray-200">
     <div class="max-w-full flex flex-wrap items-center justify-between p-4 mx-3">
         <a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
-            <img src="{{ asset('assets/images/logo.png') }}" class="w-16 h-16 border border-gray-800 rounded-full" alt="Cube Billiard Logo">
+            <img src="{{ asset('assets/images/logo.png') }}" class="w-16 h-16 border border-gray-800 rounded-full"
+                alt="Cube Billiard Logo">
         </a>
         <div class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-            @if (auth()->check()  && (auth()->user()->hasRole('User') || auth()->user()->hasRole('Kasir')))
+
+            <div class="flex items-center">
+                @if (!request()->routeIs('booking_groups*'))
+                    <label for="my-drawer-4" class="cursor-pointer">
+                        <x-icons.bag class="w-6 h-6 me-1" />
+                    </label>
+                    <x-icons.divider class="w-6 h-6" />
+                @endif
+            </div>
+
+            @if (auth()->check() && (auth()->user()->hasRole('User') || auth()->user()->hasRole('Kasir')))
                 <x-dropdown align="right" width="48">
-            <x-slot name="trigger">
-                <button
-                    class="flex items-center p-2 text-md font-medium text-gray-500 rounded-md transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none focus:ring focus:ring-black focus:ring-offset-1 focus:ring-offset-white">
-                    <div>{{ Auth::user()->name }}</div>
+                    <x-slot name="trigger">
+                        <button
+                            class="flex items-center p-2 text-md font-medium text-gray-500 rounded-md transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none focus:ring focus:ring-black focus:ring-offset-1 focus:ring-offset-white">
+                            <div>{{ Auth::user()->name }}</div>
 
-                    <div class="ml-1">
-                        <svg class="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                clip-rule="evenodd" />
-                        </svg>
-                    </div>
-                </button>
-            </x-slot>
+                            <div class="ml-1">
+                                <svg class="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                        </button>
+                    </x-slot>
 
-            <x-slot name="content">
-                <!-- Profile -->
-                <x-dropdown-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
-                </x-dropdown-link>
+                    <x-slot name="content">
+                        <!-- Profile -->
+                        <x-dropdown-link :href="route('profile.edit')">
+                            {{ __('Profile') }}
+                        </x-dropdown-link>
 
-                <!-- Authentication -->
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
+                        <!-- Authentication -->
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
 
-                    <x-dropdown-link :href="route('logout')" onclick="event.preventDefault(); this.closest('form').submit();">
-                        {{ __('Log Out') }}
-                    </x-dropdown-link>
-                </form>
-            </x-slot>
-        </x-dropdown>
-
+                            <x-dropdown-link :href="route('logout')"
+                                onclick="event.preventDefault(); this.closest('form').submit();">
+                                {{ __('Log Out') }}
+                            </x-dropdown-link>
+                        </form>
+                    </x-slot>
+                </x-dropdown>
             @else
                 <a href="{{ route('login') }}">
                     <button type="button"
-                        class="hover:text-gray-600 font-semibold rounded-lg text-sm px-0 md:px-5 py-3 text-center transition-all duration-300 ease-in-out md:mx-2">
+                        class="hover:text-gray-600 font-semibold rounded-lg text-sm pe-0 md:pe-2 py-3 text-center transition-all duration-300 ease-in-out md:mx-2">
                         Log In
                     </button>
                 </a>
