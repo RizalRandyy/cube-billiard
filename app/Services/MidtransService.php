@@ -40,24 +40,47 @@ class MidtransService
     return $snapToken;
   }
 
+  public function checkTransactionStatus($orderId)
+{
+    try {
+        // Atur config Midtrans
+        Config::$serverKey = config('midtrans.server_key');
+        Config::$isProduction = config('midtrans.is_production', false);
+        Config::$isSanitized = true;
+        Config::$is3ds = true;
 
-// public function handleCallback(Request $request)
-//   {
-//     try {
-//       $notification = new \Midtrans\Notification();
+        $status = \Midtrans\Transaction::status($orderId);
 
-//       $transaction = $notification->transaction_status;
-//       $order_id = $notification->order_id;
-//       $status = $notification->transaction_status;
+        return [
+            'transaction_status' => $status->transaction_status,
+            'status_message' => $status->status_message,
+        ];
+    } catch (\Exception $e) {
+        \Log::error("Midtrans status check failed: " . $e->getMessage());
+        return [
+            'transaction_status' => 'error',
+            'status_message' => 'Could not check status',
+        ];
+    }
+}
 
-//       Log::info("Midtrans callback received", compact('order_id', 'status'));
+  // public function handleCallback(Request $request)
+  //   {
+  //     try {
+  // $notification = new \Midtrans\Notification();
 
-//       // Lakukan update transaksi kamu berdasarkan $order_id dan $status...
+  //       $transaction = $notification->transaction_status;
+  //       $order_id = $notification->order_id;
+  //       $status = $notification->transaction_status;
 
-//       return response()->json(['message' => 'Callback handled'], 200);
-//     } catch (\Exception $e) {
-//       Log::error('Midtrans callback error', ['error' => $e->getMessage()]);
-//       return response()->json(['error' => 'Callback failed'], 500);
-//     }
-//   }
+  //       Log::info("Midtrans callback received", compact('order_id', 'status'));
+
+  //       // Lakukan update transaksi kamu berdasarkan $order_id dan $status...
+
+  //       return response()->json(['message' => 'Callback handled'], 200);
+  //     } catch (\Exception $e) {
+  //       Log::error('Midtrans callback error', ['error' => $e->getMessage()]);
+  //       return response()->json(['error' => 'Callback failed'], 500);
+  //     }
+  //   }
 }

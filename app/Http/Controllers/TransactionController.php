@@ -15,7 +15,9 @@ class TransactionController extends Controller
      * Display a listing of the resource.
      */
 
-    public function index() {}
+    public function index() {
+        return view('admin.transactions.index');
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -28,7 +30,11 @@ class TransactionController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(){
+
+    }
+
+    public function initiateTransaction(Request $request)
     {
         // Ambil BookingGroup terbaru milik user
         $bookingGroup = BookingGroup::where('user_id', auth()->id())
@@ -38,12 +44,6 @@ class TransactionController extends Controller
         if (!$bookingGroup) {
             return back()->with('error', 'Belum ada booking.');
         }
-
-        // Ambil transaksi terakhir yang masih pending
-        $transaction = Transaction::where('booking_group_id', $bookingGroup->id)
-            ->where('payment_status', 'pending')
-            ->latest()
-            ->first();
 
         $bookings = Booking::whereHas('bookingGroup', function ($query) {
             $query->where('user_id', auth()->id());
@@ -57,12 +57,36 @@ class TransactionController extends Controller
             }
         }
 
-        // Jika belum ada transaksi, buat baru
+        // Ambil transaksi terakhir yang masih pending
+        $transaction = Transaction::where('booking_group_id', $bookingGroup->id)
+            ->where('payment_status', 'pending')
+            ->latest()
+            ->first();
+
+        // Cek apakah transaksi sudah expired dari Midtrans
+        if ($transaction) {
+            $status = app(MidtransService::class)->checkTransactionStatus($transaction->midtrans_order_id);
+
+            if (
+                in_array($status['transaction_status'], ['expire', 'cancel', 'deny'])
+            ) {
+                // Tandai transaksi lama tidak aktif
+                $transaction->update([
+                    'payment_status' => 'failed',
+                    'is_latest' => false,
+                ]);
+
+                // Set transaksi ke null agar buat baru di bawah
+                $transaction = null;
+            }
+        }
+
+        // Jika belum ada transaksi (baru atau karena yang lama gagal), buat baru
         if (!$transaction) {
             $transaction = Transaction::create([
                 'booking_group_id' => $bookingGroup->id,
                 'payment_status' => 'pending',
-                'midtrans_order_id' => 'ORDER-' . Str::uuid(),
+                'midtrans_order_id' => 'CUBE-' . Str::uuid(),
                 'payment_type' => '-',
                 'amount' => $total_table_price,
                 'is_latest' => true,
@@ -106,6 +130,8 @@ class TransactionController extends Controller
                 $booking->update([
                     'status' => 'paid',
                 ]);
+
+                $booking->delete();
             }
         }
 

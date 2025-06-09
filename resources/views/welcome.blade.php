@@ -1,5 +1,5 @@
 <x-guest-layout>
-    
+
     <div class="flex items-end justify-end">
         <x-user.right-sidebar :bookings="$bookings"></x-user.right-sidebar>
     </div>
@@ -87,8 +87,8 @@
                             </h3>
                             <button type="button" id="closeModal" onclick="closeModal()"
                                 class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center">
-                                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                    fill="none" viewBox="0 0 14 14">
+                                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                    viewBox="0 0 14 14">
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                                         stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
                                 </svg>
@@ -97,8 +97,7 @@
                         </div>
 
                         <!-- Modal body -->
-                        <form class="p-4 md:p-5 " id="formBooking" action="{{ route('bookings.store') }}"
-                            method="post">
+                        <form class="p-4 md:p-5 " id="formBooking" action="{{ route('bookings.store') }}" method="post">
                             @csrf
                             @method('POST')
 
@@ -141,135 +140,7 @@
     <x-user.cto-booking></x-user.cto-booking>
 
     @push('scripts')
-        <script>
-            $(document).ready(function() {
-                renderDateButtons(new Date());
-
-                flatpickr("#calendar-wrapper", {
-                    wrap: true,
-                    allowInput: true,
-                    clickOpens: true,
-                    locale: Indonesian,
-                    dateFormat: "d-m-Y",
-                    minDate: "today",
-                    maxDate: new Date().fp_incr(1),
-                    position: "below",
-                    onChange: function(selectedDates) {
-                        if (selectedDates.length) {
-                            renderDateButtons(selectedDates[0]);
-                        }
-                    }
-                });
-
-                function renderDateButtons(startDate) {
-                    const $container = $("#date-buttons");
-                    $container.empty();
-
-                    const days = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
-
-                    for (let i = 0; i < 7; i++) {
-                        const date = new Date(startDate);
-                        date.setDate(date.getDate() + i);
-
-                        const dayName = days[date.getDay()];
-                        const dayDate = date.getDate();
-                        const monthShort = date.toLocaleString("id-ID", {
-                            month: "short"
-                        });
-
-                        const isoDate = date.toLocaleDateString('sv-SE'); // Format: YYYY-MM-DD
-
-                        const $btn = $("<button></button>")
-                            .addClass(
-                                "flex flex-col items-center px-2 md:px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100"
-                            )
-                            .attr("data-date", isoDate)
-                            .html(
-                                `<span class="text-xs md:text-sm">${dayName}</span><span class="text-xs md:text-base font-semibold">${dayDate} ${monthShort}</span>`
-                            );
-
-                        if (i === 0) {
-                            $btn
-                                .removeClass("text-gray-700 hover:bg-gray-100")
-                                .addClass("bg-[#1C3F3A] text-white font-semibold hover:bg-[#1C3F3A] active-date");
-                        }
-
-                        $btn.on("click", function() {
-                            $("#date-buttons button")
-                                .removeClass(
-                                    "bg-[#1C3F3A] text-white font-semibold active-date hover:bg-[#1C3F3A]")
-                                .addClass("text-gray-700 hover:bg-gray-100");
-
-                            $(this)
-                                .removeClass("text-gray-700 hover:bg-gray-100")
-                                .addClass(
-                                    "bg-[#1C3F3A] text-white font-semibold hover:bg-[#1C3F3A] active-date");
-                            console.log($(this).attr("data-date"));
-                        });
-
-                        $container.append($btn);
-                    }
-                }
-
-                const startHour = 9;
-                const endHour = 21;
-
-                for (let i = startHour; i < endHour; i++) {
-                    const start = String(i).padStart(2, '0') + ":00";
-                    const end = String(i + 1).padStart(2, '0') + ":00";
-                    const timeRange = `${start} - ${end}`;
-
-                    $('#timeSlots').append(`
-                      <button 
-                        type="button" 
-                        class="time-btn border rounded-lg p-2 md:p-4 text-center hover:bg-gray-100 transition w-full"
-                        data-time="${timeRange}">
-                        <p class="text-xs text-gray-500 mb-1">60 Menit</p>
-                        <p class="font-bold text-sm">${timeRange}</p>
-                        <p class="price text-gray-700 text-sm">Rp</p>
-                      </button>
-                    `);
-                }
-
-                // Toggle button selection
-                $(document).on('click', '.time-btn', function() {
-                    $(this).toggleClass('bg-[#1C3F3A] text-white border-none active hover:bg-[#1C3F3A]')
-                        .toggleClass('text-gray-700 hover:bg-gray-100');
-
-                    $(this).find('p')
-                        .toggleClass('text-white')
-                        .toggleClass('text-gray-700 text-gray-500');
-
-                    // Ambil semua waktu yang dipilih
-                    const selectedTimes = $('.time-btn.active').map(function() {
-                        return $(this).data('time');
-                    }).get(); // .get() untuk ubah ke array JavaScript biasa
-
-                    // Update input hidden
-                    // Bersihkan input lama
-                    $('#formBooking input[name="selected_time[]"]').remove();
-
-                    selectedTimes.forEach(time => {
-                        $('#formBooking').append(
-                            `<input type="hidden" name="selected_time[]" value="${time}">`
-                        );
-                    });
-
-                    // Ambil informasi dari tombol yang diklik
-                    const tableId = $('#formBooking').attr('data-id');
-                    const date = $('.active-date').data('date');
-
-                    // Isi input hidden yang lain
-                    $('#pool_table_id').val(tableId);
-                    $('#booking_date').val(date);
-                    $('#start_time').val(selectedTimes[0] || '');
-                    $('#end_time').val(selectedTimes[selectedTimes.length - 1] || '');
-
-                    console.log("Jam dipilih:", selectedTimes);
-                });
-
-            });
-        </script>
+        @include('components.js.booking')
         @include('components.js.renderPoolTablesUser')
     @endpush
 

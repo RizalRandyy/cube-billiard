@@ -15,7 +15,13 @@ class LandingPageController extends Controller
             $query->where('user_id', auth()->id());
         })->get();
 
-        return view('welcome', compact('bookings'));
+        $unavailableBookings = Booking::withTrashed()
+            ->whereHas('bookingGroup.transactions', function ($q) {
+                $q->where('payment_status', 'paid');
+            })
+            ->get(['pool_table_id', 'booking_date', 'start_time', 'end_time']); // Ambil kolom
+
+        return view('welcome', compact('bookings', 'unavailableBookings'));
     }
 
     public function gallery()

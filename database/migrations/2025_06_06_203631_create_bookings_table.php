@@ -19,6 +19,7 @@ return new class extends Migration
             $table->time('start_time');
             $table->time('end_time');
             $table->string('status')->default('pending');
+            $table->softDeletes();
             $table->timestamps();
 
             $table->foreign('pool_table_id')->references('id')->on('pool_tables')->onDelete('cascade');

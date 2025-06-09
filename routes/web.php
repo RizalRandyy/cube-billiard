@@ -23,6 +23,7 @@ Route::get('/dashboard', function () {
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('users', UserController::class)->middleware('role:Admin');
     Route::resource('pool_tables', PoolTableController::class)->middleware(['role:Admin|Kasir']);
+    Route::resource('transactions', TransactionController::class)->middleware(['role:Admin|Kasir']);
 });
 
 Route::get('/gallery', [LandingPageController::class,'gallery'])->name('gallery');
@@ -34,7 +35,6 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('bookings', BookingController::class)->middleware(['role:User|Kasir']);
     Route::resource('booking_groups', BookingGroupsController::class)->middleware(['role:User|Kasir']);
-    // Route::resource('transaction', TransactionController::class)->middleware(['role:User|Kasir']);
 });
 
 // Post data ajax
@@ -48,7 +48,7 @@ Route::post('/midtrans/callback', [TransactionController::class, 'handleCallback
 Route::get('/users-data', [UserController::class, 'getUsers'])->name('admin.users.data');
 Route::get('/pool-tables-data', [PoolTableController::class, 'getPoolTables'])->name('admin.poolTables.data');
 
-Route::get('/transaction-data', [TransactionController::class, 'store'])->name('transaction.data');
+Route::get('/transaction-data', [TransactionController::class, 'initiateTransaction'])->name('transaction.data');
 
 require __DIR__.'/auth.php';
 
