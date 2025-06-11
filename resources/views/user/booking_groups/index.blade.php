@@ -94,7 +94,7 @@
             $(document).ready(function() {
                 $('#pay-button').on('click', function() {
                     $.ajax({
-                        url: '/transaction-data',
+                        url: 'initiate-transaction',
                         method: 'GET',
                         headers: {
                             'X-CSRF-TOKEN': '{{ csrf_token() }}'

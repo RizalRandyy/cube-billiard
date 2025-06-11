@@ -15,7 +15,8 @@ class TransactionController extends Controller
      * Display a listing of the resource.
      */
 
-    public function index() {
+    public function index()
+    {
         return view('admin.transactions.index');
     }
 
@@ -30,9 +31,28 @@ class TransactionController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(){
+    public function store() {}
 
+    public function getTransactions(Request $request)
+    {
+        $query = Transaction::with('bookingGroup.user');
+
+        if ($request->has('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('booking_group_id', 'like', '%' . $request->search . '%')
+                    ->orWhere('payment_status', 'like', '%' . $request->search . '%')
+                    ->orWhereHas('bookingGroup.user', function ($sub) use ($request) {
+                        $sub->where('name', 'like', '%' . $request->search . '%');
+                    });
+            });
+        }
+
+
+        $transactions = $query->paginate(5);
+
+        return response()->json($transactions);
     }
+
 
     public function initiateTransaction(Request $request)
     {

@@ -47,8 +47,8 @@ Route::post('/midtrans/callback', [TransactionController::class, 'handleCallback
 // Get data ajax
 Route::get('/users-data', [UserController::class, 'getUsers'])->name('admin.users.data');
 Route::get('/pool-tables-data', [PoolTableController::class, 'getPoolTables'])->name('admin.poolTables.data');
-
-Route::get('/transaction-data', [TransactionController::class, 'initiateTransaction'])->name('transaction.data');
+Route::get('/initiate-transaction', [TransactionController::class, 'initiateTransaction'])->name('initiate-transaction.data');
+Route::get('/transactions-data', [TransactionController::class, 'getTransactions'])->name('admin.transactions.data');
 
 require __DIR__.'/auth.php';
 

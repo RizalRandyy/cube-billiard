@@ -2,7 +2,7 @@
   <x-slot name="header">
     <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-start">
       <h2 class="font-semibold text-xl leading-tight">
-        {{ __('Transaksi') }}
+        {{ __('Pembayaran') }}
       </h2>
     </div>
   </x-slot>
@@ -22,16 +22,21 @@
       <table id="users-table" class="min-w-full rounded-md">
         <thead>
           <tr class="bg-gray-200 text-gray-600 dark:bg-slate-900 dark:text-white text-sm leading-normal">
-            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Nama</th>
-            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider hidden sm:table-cell">
-              Email</th>
-            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider hidden sm:table-cell">
-              No Telepon</th>
+            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Id</th>
             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
-              Role</th>
-
-            {{-- password? --}}
-
+              Nama</th>
+            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider hidden sm:table-cell">
+              Tanggal Pembayaran</th>
+            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider hidden sm:table-cell">
+              Order Id</th>
+            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+              Metode Pembayaran</th>
+            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+              Total Pembayaran</th>
+            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+              Status</th>
+            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+              Pembayaran Terakhir</th>
             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Aksi</th>
           </tr>
         </thead>
@@ -57,7 +62,7 @@
       }
     }
     </script>
-    @include('components.js.dtUsers')
+    @include('components.js.dtTransaction')
   @endpush
 
 </x-app-layout>
