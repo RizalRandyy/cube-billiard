@@ -22,20 +22,20 @@
       <table id="users-table" class="min-w-full rounded-md">
         <thead>
           <tr class="bg-gray-200 text-gray-600 dark:bg-slate-900 dark:text-white text-sm leading-normal">
-            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Id</th>
+            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider hidden sm:table-cell">Id</th>
             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
               Nama</th>
             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider hidden sm:table-cell">
               Tanggal Pembayaran</th>
             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider hidden sm:table-cell">
               Order Id</th>
-            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider hidden sm:table-cell">
               Metode Pembayaran</th>
-            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider hidden sm:table-cell">
               Total Pembayaran</th>
             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
               Status</th>
-            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider hidden sm:table-cell">
               Pembayaran Terakhir</th>
             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Aksi</th>
           </tr>

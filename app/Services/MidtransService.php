@@ -29,7 +29,7 @@ class MidtransService
       'customer_details' => [
         'first_name' => $transaction->bookingGroup->user->name,
         'email' => $transaction->bookingGroup->user->email,
-      ]
+      ],
     ];
 
     $snapToken = Snap::getSnapToken($params);
@@ -41,46 +41,26 @@ class MidtransService
   }
 
   public function checkTransactionStatus($orderId)
-{
+  {
     try {
-        // Atur config Midtrans
-        Config::$serverKey = config('midtrans.server_key');
-        Config::$isProduction = config('midtrans.is_production', false);
-        Config::$isSanitized = true;
-        Config::$is3ds = true;
+      // Atur config Midtrans
+      Config::$serverKey = config('midtrans.server_key');
+      Config::$isProduction = config('midtrans.is_production', false);
+      Config::$isSanitized = true;
+      Config::$is3ds = true;
 
-        $status = \Midtrans\Transaction::status($orderId);
+      $status = \Midtrans\Transaction::status($orderId);
 
-        return [
-            'transaction_status' => $status->transaction_status,
-            'status_message' => $status->status_message,
-        ];
+      return [
+        'transaction_status' => $status->transaction_status,
+        'status_message' => $status->status_message,
+      ];
     } catch (\Exception $e) {
-        \Log::error("Midtrans status check failed: " . $e->getMessage());
-        return [
-            'transaction_status' => 'error',
-            'status_message' => 'Could not check status',
-        ];
+      \Log::error("Midtrans status check failed: " . $e->getMessage());
+      return [
+        'transaction_status' => 'error',
+        'status_message' => 'Could not check status',
+      ];
     }
-}
-
-  // public function handleCallback(Request $request)
-  //   {
-  //     try {
-  // $notification = new \Midtrans\Notification();
-
-  //       $transaction = $notification->transaction_status;
-  //       $order_id = $notification->order_id;
-  //       $status = $notification->transaction_status;
-
-  //       Log::info("Midtrans callback received", compact('order_id', 'status'));
-
-  //       // Lakukan update transaksi kamu berdasarkan $order_id dan $status...
-
-  //       return response()->json(['message' => 'Callback handled'], 200);
-  //     } catch (\Exception $e) {
-  //       Log::error('Midtrans callback error', ['error' => $e->getMessage()]);
-  //       return response()->json(['error' => 'Callback failed'], 500);
-  //     }
-  //   }
+  }
 }

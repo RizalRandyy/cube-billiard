@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
-use App\Models\BookingGroup;
-use Illuminate\Http\Request;
 
 class LandingPageController extends Controller
 {
@@ -21,7 +19,7 @@ class LandingPageController extends Controller
             })
             ->get(['pool_table_id', 'booking_date', 'start_time', 'end_time']); // Ambil kolom
 
-        return view('welcome', compact('bookings', 'unavailableBookings'));
+        return view('landing-page', compact('bookings', 'unavailableBookings'));
     }
 
     public function gallery()

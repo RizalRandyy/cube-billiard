@@ -116,7 +116,7 @@
         const isDoubleBooked = bookings.some(b => {
           return (
             b.booking_date === date &&
-            parseInt(b.pool_table_id) == tableId && // <== hanya disable meja yang dipilih
+            parseInt(b.pool_table_id) == tableId && // hanya disable meja yang dipilih
             isTimeOverlap(start, end, b.start_time, b.end_time)
           );
         });

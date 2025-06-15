@@ -30,7 +30,7 @@ class AuthenticatedSessionController extends Controller
 
         $role = auth()->user()->getRoleNames()->first();
 
-        $destination = in_array($role, ['Admin', 'Kasir']) ? 'dashboard' : '/';
+        $destination = in_array($role, ['Admin', 'Kasir']) ? 'admin.dashboard' : '/';
 
         return redirect()->intended(route($destination, absolute: false));
     }

@@ -9,15 +9,29 @@ import 'notyf/notyf.min.css';
 import Swal from 'sweetalert2';
 import "flatpickr/dist/flatpickr.min.css";
 import { Indonesian } from "flatpickr/dist/l10n/id.js";
-import flatpickr from "flatpickr"; 
+import flatpickr from "flatpickr";
 
-window.Flatpickr = flatpickr; 
+import { SwalDeleteUser, SwalResetPasswordUser, SwalDeletePoolTableAdmin } from './helpers/swal';
+import { slotsAdminPage } from './pages/admin/pool-table/layout-grid';
+import { formatPricePoolTable } from './helpers/format-price';
+
+window.Flatpickr = flatpickr;
 
 window.Indonesian = Indonesian;
 
 window.Swal = Swal;
 
-window.PerfectScrollbar = PerfectScrollbar
+window.SwalDeleteUser = SwalDeleteUser;
+
+window.SwalResetPasswordUser = SwalResetPasswordUser;
+
+window.SwalDeletePoolTableAdmin = SwalDeletePoolTableAdmin;
+
+window.PerfectScrollbar = PerfectScrollbar;
+
+window.slotsAdminPage = slotsAdminPage;
+
+window.formatPricePoolTable = formatPricePoolTable;
 
 window.$ = $;
 
@@ -36,9 +50,9 @@ window.notyf = new Notyf({
 });
 
 window.addEventListener('DOMContentLoaded', () => {
-  if (window.flashMessage) {
-    window.notyf.success(window.flashMessage);
-  }
+    if (window.flashMessage) {
+        window.notyf.success(window.flashMessage);
+    }
 });
 
 

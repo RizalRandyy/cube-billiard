@@ -109,7 +109,7 @@
             }
         }
 
-        window.closeModal = () => toggleModal(false);
+        window.closeModalPoolTable = () => toggleModal(false);
         $('#modalOverlay').on('click', () => toggleModal(false));
 
         const notyf = new Notyf({

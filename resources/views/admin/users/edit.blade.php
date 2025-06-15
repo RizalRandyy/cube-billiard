@@ -100,38 +100,10 @@
     @push('scripts')
         <script>
             $(document).ready(function() {
-                const notyf = new Notyf({
-                    duration: 3000,
-                    ripple: true,
-                    dismissible: true,
-                    position: {
-                        x: 'center',
-                        y: 'top',
-                    }
-                });
-
                 $('#resetPasswordBtn').on('click', function() {
                     const roleName = $('#role_id option:selected').text();
 
-                    Swal.fire({
-                        title: 'Reset Password?',
-                        html: `<p class="text-gray-700 dark:text-gray-200">Kata sandi baru akan ditetapkan sesuai dengan role Anda: <span class="font-semibold text-yellow-600 dark:text-yellow-400">"${roleName}"</span>.</p>`,
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Ya, Reset!',
-                        cancelButtonText: 'Batal',
-                        focusCancel: true,
-                        background: '#fff',
-                        color: '#111827',
-                        customClass: {
-                            popup: 'rounded-xl shadow-lg px-6 py-4',
-                            confirmButton: 'bg-yellow-500 hover:bg-yellow-600 text-white font-medium px-4 py-2 rounded-lg focus:outline-none mr-5',
-                            cancelButton: 'bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium px-4 py-2 rounded-lg focus:outline-none',
-                            title: 'text-lg font-bold',
-                            htmlContainer: 'text-sm',
-                        },
-                        buttonsStyling: false
-                    }).then((result) => {
+                    SwalResetPasswordUser(roleName).then((result) => {
                         if (result.isConfirmed) {
                             $.ajax({
                                 url: "{{ route('admin.users.reset-password', $user->id) }}",

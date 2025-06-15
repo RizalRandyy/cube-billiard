@@ -92,6 +92,7 @@
 
         <script>
             $(document).ready(function() {
+
                 $('#pay-button').on('click', function() {
                     $.ajax({
                         url: 'initiate-transaction',
@@ -100,11 +101,36 @@
                             'X-CSRF-TOKEN': '{{ csrf_token() }}'
                         },
                         success: function(data) {
+
                             if (data.snapToken) {
+                                const transactionId = data.transaction.id;
+
+                                console.log(data);
+
                                 snap.pay(data.snapToken, {
                                     onSuccess: function(result) {
                                         console.log('Pembayaran sukses!');
-                                        window.location.reload(); // refresh halaman setelah sukses
+
+                                        $.ajax({
+                                            url: `update-transaction/${transactionId}`,
+                                            method: 'POST',
+                                            data: {
+                                                _token: '{{ csrf_token() }}',
+                                                payment_status: 'paid',
+                                                payment_type: result.payment_type,
+                                                transaction_status: result.transaction_status,
+                                            },
+                                            success: function(data) {
+                                                console.log(
+                                                    'Update data sukses!'
+                                                    );
+                                                console.log(transactionId);
+                                                window.location.reload(); // refresh halaman setelah sukses
+                                            },
+                                            error: function() {
+                                                console.log("error");
+                                            }
+                                        });
                                     },
                                     onPending: function(result) {
                                         console.log('Pembayaran pending!');
@@ -128,9 +154,9 @@
                 $('#status-button').on('click', function() {
                     Swal.fire({
                         title: 'Pembayaran Berhasil',
-    html: `<p class="mb-1 text-base">Status: <strong>${transaction.payment_status ?? '-'}</strong></p>
-           <p class="mb-1 text-base">Metode: <strong>${transaction.payment_type ?? '-'}</strong></p>
-           <p class="mb-1 text-base">Total: <strong>Rp ${Number(transaction.amount ?? 0).toLocaleString('id-ID')}</strong></p>`,
+                        html: `<p class="mb-1 text-base">Status: <strong>${transaction.payment_status ?? '-'}</strong></p>
+                                <p class="mb-1 text-base">Metode: <strong>${transaction.payment_type ?? '-'}</strong></p>
+                                <p class="mb-1 text-base">Total: <strong>Rp ${Number(transaction.amount ?? 0).toLocaleString('id-ID')}</strong></p>`,
                         icon: 'success',
                         confirmButtonText: 'Ok',
                         focusCancel: true,

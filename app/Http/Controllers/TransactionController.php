@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use App\Models\BookingGroup;
 use Illuminate\Http\Request;
 use App\Services\MidtransService;
+use App\Models\User;
 
 class TransactionController extends Controller
 {
@@ -31,7 +32,10 @@ class TransactionController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store() {}
+    public function store() 
+    {
+        //
+    }
 
     public function getTransactions(Request $request)
     {
@@ -119,55 +123,64 @@ class TransactionController extends Controller
         return response()->json(['snapToken' => $snapToken, 'transaction' => $transaction]);
     }
 
-    public function handleCallback(Request $request)
+    public function updateTransaction(Request $request, $id)
     {
-        $orderId = $request->input('order_id');
-        $transactionStatus = $request->input('transaction_status');
-        $paymentType = $request->input('payment_type');
+        // Cari transaksi
+        $transaction = Transaction::findOrFail($id);
 
-        // Cari transaksi berdasarkan order_id, karena Midtrans kirim order_id
-        $transaction = Transaction::where('midtrans_order_id', $orderId)->first();
-
-        if (!$transaction) {
-            \Log::warning("Transaction not found for order ID: {$orderId}");
-            return response()->json(['error' => 'Transaction not found'], 404);
-        }
-
-        // Update hanya jika status transaksi settlement
-        if ($transactionStatus === 'settlement') {
+        // Update data
+        if ($request->input('transaction_status') === 'settlement') {
             $transaction->update([
-                'payment_status' => 'paid',
-                'payment_type' => $paymentType,
+                'payment_status' => $request->input('payment_status'),
+                'payment_type' => $request->input('payment_type'),
                 'paid_at' => now(),
             ]);
-
+    
             // Ambil semua bookings berdasarkan booking_group_id dari transaction
             $bookings = Booking::where('booking_group_id', $transaction->booking_group_id)->get();
-
-            $total_table_price = 0;
-
+    
             foreach ($bookings as $booking) {
                 $booking->update([
                     'status' => 'paid',
                 ]);
-
+    
                 $booking->delete();
             }
         }
 
-        \Log::info('Midtrans callback received', compact('orderId', 'transactionStatus', 'paymentType'));
-
-        return response()->json(['message' => 'Callback handled'], 200);
+        return response()->json(['message' => 'Transaksi berhasil diupdate'], 200);
     }
-
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Transaction $transaction)
     {
-        //
+        $bookingGroupId = $transaction->booking_group_id;
+
+        $bookingGroup = BookingGroup::where('id', $bookingGroupId)->first();
+
+        return view('admin.transactions.show', compact('bookingGroupId', 'bookingGroup', 'transaction'));
     }
+
+    public function getBookedTablesUser(Request $request, $booking_group_id)
+    {
+        $query = Booking::where('booking_group_id', $booking_group_id)->with('poolTable');
+
+        if ($request->has('search')) {
+            $search = $request->search;
+
+            $query->where(function ($q) use ($search) {
+                $q->where('booking_date', 'like', '%' . $search . '%');
+            });
+        }
+
+        // dd($query);
+        $bookings = $query->withTrashed()->paginate(5);
+
+        return response()->json($bookings);
+    }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -191,5 +204,47 @@ class TransactionController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function handleCallback(Request $request)
+    {
+        // return response()->json(['OK', 200]);
+        // $orderId = $request->input('order_id');
+        // $transactionStatus = $request->input('transaction_status');
+        // $paymentType = $request->input('payment_type');
+
+        // // Cari transaksi berdasarkan order_id, karena Midtrans kirim order_id
+        // $transaction = Transaction::where('midtrans_order_id', $orderId)->first();
+
+        // if (!$transaction) {
+        //     \Log::warning("Transaction not found for order ID: {$orderId}");
+        //     return response()->json(['error' => 'Transaction not found'], 404);
+        // }
+
+        // // Update hanya jika status transaksi settlement
+        // if ($transactionStatus === 'settlement') {
+        //     $transaction->update([
+        //         'payment_status' => 'paid',
+        //         'payment_type' => $paymentType,
+        //         'paid_at' => now(),
+        //     ]);
+
+        //     // Ambil semua bookings berdasarkan booking_group_id dari transaction
+        //     $bookings = Booking::where('booking_group_id', $transaction->booking_group_id)->get();
+
+        //     $total_table_price = 0;
+
+        //     foreach ($bookings as $booking) {
+        //         $booking->update([
+        //             'status' => 'paid',
+        //         ]);
+
+        //         $booking->delete();
+        //     }
+        // }
+
+        // \Log::info('Midtrans callback received', compact('orderId', 'transactionStatus', 'paymentType'));
+
+        // return response()->json(['message' => 'Callback handled'], 200);
     }
 }

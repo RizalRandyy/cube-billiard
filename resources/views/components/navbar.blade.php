@@ -52,7 +52,7 @@
 
     <div class="w-10 h-10"></div>
 
-    <a href="{{ route('dashboard') }}">
+    <a href="{{ route('admin.dashboard') }}">
         <x-application-logo aria-hidden="true" class="w-10 h-10" /> 
         <span class="sr-only">Dashboard</span>
     </a>
