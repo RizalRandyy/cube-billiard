@@ -11,9 +11,11 @@ import "flatpickr/dist/flatpickr.min.css";
 import { Indonesian } from "flatpickr/dist/l10n/id.js";
 import flatpickr from "flatpickr";
 
-import { SwalDeleteUser, SwalResetPasswordUser, SwalDeletePoolTableAdmin } from './helpers/swal';
+import { SwalDeleteUser, SwalResetPasswordUser, SwalDeletePoolTableAdmin, SwalPaymentInfo } from './helpers/swal';
 import { slotsAdminPage } from './pages/admin/pool-table/layout-grid';
 import { formatPricePoolTable } from './helpers/format-price';
+import { normalizeTime } from './helpers/normalize-time';
+import { isTimeOverlap } from './helpers/is-time-overlap';
 
 window.Flatpickr = flatpickr;
 
@@ -27,11 +29,17 @@ window.SwalResetPasswordUser = SwalResetPasswordUser;
 
 window.SwalDeletePoolTableAdmin = SwalDeletePoolTableAdmin;
 
+window.SwalPaymentInfo = SwalPaymentInfo
+
 window.PerfectScrollbar = PerfectScrollbar;
 
 window.slotsAdminPage = slotsAdminPage;
 
 window.formatPricePoolTable = formatPricePoolTable;
+
+window.normalizeTime = normalizeTime;
+
+window.isTimeOverlap = isTimeOverlap;
 
 window.$ = $;
 

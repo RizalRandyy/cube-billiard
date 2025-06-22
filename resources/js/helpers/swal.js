@@ -64,3 +64,24 @@ export const SwalDeletePoolTableAdmin = () => {
     buttonsStyling: false
   })
 }
+
+export const SwalPaymentInfo = (transaction) => {
+  Swal.fire({
+    title: 'Pembayaran Berhasil',
+    html: `<p class="mb-1 text-base">Status: <strong>${transaction.payment_status ?? '-'}</strong></p>
+                                  <p class="mb-1 text-base">Metode: <strong>${transaction.payment_type ?? '-'}</strong></p>
+                                  <p class="mb-1 text-base">Total: <strong>Rp ${Number(transaction.amount ?? 0).toLocaleString('id-ID')}</strong></p>`,
+    icon: 'success',
+    confirmButtonText: 'Ok',
+    focusCancel: true,
+    background: '#fff',
+    color: '#111827',
+    customClass: {
+      popup: 'rounded-xl shadow-lg px-6 py-4',
+      confirmButton: 'bg-gray-700 hover:bg-gray-500 text-white font-medium px-4 py-2 rounded-lg focus:outline-none mr-5 transtion-all ease-in-out duration-300',
+      title: 'text-lg font-bold',
+      htmlContainer: 'text-sm',
+    },
+    buttonsStyling: false
+  });
+}

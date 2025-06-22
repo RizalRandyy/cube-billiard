@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
+use App\Models\User;
 use App\Models\Booking;
 use App\Models\Transaction;
 use Illuminate\Support\Str;
 use App\Models\BookingGroup;
 use Illuminate\Http\Request;
 use App\Services\MidtransService;
-use App\Models\User;
 
 class TransactionController extends Controller
 {
@@ -32,25 +33,38 @@ class TransactionController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store() 
+    public function store()
     {
         //
     }
 
     public function getTransactions(Request $request)
     {
+        $period = $request->query('period');
+        $startDate = $request->query('start_date');
+        $endDate = $request->query('end_date');
+
         $query = Transaction::with('bookingGroup.user');
 
         if ($request->has('search')) {
             $query->where(function ($q) use ($request) {
                 $q->where('booking_group_id', 'like', '%' . $request->search . '%')
                     ->orWhere('payment_status', 'like', '%' . $request->search . '%')
+                    ->orWhereDate('paid_at', 'like', '%' .  $request->search . '%')
                     ->orWhereHas('bookingGroup.user', function ($sub) use ($request) {
                         $sub->where('name', 'like', '%' . $request->search . '%');
                     });
             });
         }
 
+        if ($period == 'day') {
+            $query->whereDate('created_at', Carbon::today());
+        } elseif ($period == 'month') {
+            $query->whereMonth('created_at', Carbon::now()->month)
+                ->whereYear('created_at', Carbon::now()->year);
+        } elseif ($period == 'custom' && $startDate && $endDate) {
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        }
 
         $transactions = $query->paginate(5);
 
@@ -89,11 +103,16 @@ class TransactionController extends Controller
 
         // Cek apakah transaksi sudah expired dari Midtrans
         if ($transaction) {
+
+            $transaction->update([
+                'amount' => $total_table_price,
+                'midtrans_order_id' => 'CUBE-' . Str::uuid(),
+                'snap_token' => null,
+            ]);
+
             $status = app(MidtransService::class)->checkTransactionStatus($transaction->midtrans_order_id);
 
-            if (
-                in_array($status['transaction_status'], ['expire', 'cancel', 'deny'])
-            ) {
+            if (in_array($status['transaction_status'], ['expire', 'cancel', 'deny'])) {
                 // Tandai transaksi lama tidak aktif
                 $transaction->update([
                     'payment_status' => 'failed',
@@ -135,15 +154,15 @@ class TransactionController extends Controller
                 'payment_type' => $request->input('payment_type'),
                 'paid_at' => now(),
             ]);
-    
+
             // Ambil semua bookings berdasarkan booking_group_id dari transaction
             $bookings = Booking::where('booking_group_id', $transaction->booking_group_id)->get();
-    
+
             foreach ($bookings as $booking) {
                 $booking->update([
                     'status' => 'paid',
                 ]);
-    
+
                 $booking->delete();
             }
         }
@@ -165,13 +184,16 @@ class TransactionController extends Controller
 
     public function getBookedTablesUser(Request $request, $booking_group_id)
     {
-        $query = Booking::where('booking_group_id', $booking_group_id)->with('poolTable');
+        $query = Booking::where('booking_group_id', $booking_group_id)->whereIn('status', ['pending', 'paid'])->with('poolTable');
 
         if ($request->has('search')) {
             $search = $request->search;
 
             $query->where(function ($q) use ($search) {
-                $q->where('booking_date', 'like', '%' . $search . '%');
+                $q->where('booking_date', 'like', '%' . $search . '%')
+                    ->orWhereHas('poolTable', function ($sub) use ($search) {
+                        $sub->where('name', 'like', '%' . $search . '%');
+                    });
             });
         }
 

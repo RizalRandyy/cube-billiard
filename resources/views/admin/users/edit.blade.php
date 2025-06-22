@@ -68,14 +68,6 @@
                                 oninput="this.value = this.value.replace(/[^0-9]/g, '')"></x-form.input>
                             <x-input-error :messages="$errors->get('phone')" class="mt-2" />
                         </div>
-
-                        {{-- Reset Password --}}
-                        <div>
-                            <button type="button" id="resetPasswordBtn"
-                                class="px-5 py-2.5 text-sm font-medium text-white bg-yellow-500 hover:bg-yellow-600 transition-all duration-300 ease-in-out rounded-lg focus:ring-4 focus:ring-primary-200 hover:bg-primary-800">
-                                Reset Password
-                            </button>
-                        </div>
                     </div>
 
                     {{-- Submit --}}
@@ -85,46 +77,8 @@
                             Simpan
                         </button>
                     </div>
-
                 </form>
-
-                <form id="resetPasswordForm" action="{{ route('admin.users.reset-password', $user->id) }}"
-                    method="POST" style="display: none;">
-                    @csrf
-                </form>
-
             </div>
         </section>
     </div>
-
-    @push('scripts')
-        <script>
-            $(document).ready(function() {
-                $('#resetPasswordBtn').on('click', function() {
-                    const roleName = $('#role_id option:selected').text();
-
-                    SwalResetPasswordUser(roleName).then((result) => {
-                        if (result.isConfirmed) {
-                            $.ajax({
-                                url: "{{ route('admin.users.reset-password', $user->id) }}",
-                                type: "POST",
-                                data: {
-                                    _token: "{{ csrf_token() }}"
-                                },
-                                success: function(response) {
-                                    notyf.success(response.message);
-                                },
-                                error: function(xhr) {
-                                    notyf.error('Terjadi kesalahan saat mereset password.');
-                                }
-                            });
-                        }
-                    });
-                });
-            });
-        </script>
-    @endpush
-
-
-
 </x-app-layout>

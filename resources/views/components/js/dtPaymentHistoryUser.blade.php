@@ -3,11 +3,8 @@
         let page = 1;
         let lastPage = 1;
         let searchQuery = '';
-        let period = '';
-        let startDate = '';
-        let endDate = '';
 
-        function fetchtransactions(page, searchQuery = '', period = '', startDate = '', endDate = '') {
+        function fetchtransactions(page, searchQuery = '') {
             function formatRupiah(number) {
                 return new Intl.NumberFormat('id-ID', {
                     style: 'currency',
@@ -16,9 +13,7 @@
             }
 
             $.ajax({
-                url: '/transactions-data?page=' + page + '&search=' + searchQuery + '&period=' +
-                    period +
-                    '&start_date=' + startDate + '&end_date=' + endDate,
+                url: '/payment-history-data?page=' + page + '&search=' + searchQuery,
                 method: 'GET',
                 success: function(response) {
                     let rows = '';
@@ -26,7 +21,7 @@
                     if (response.data.length === 0) {
                         rows = `
                 <tr>
-                    <td colspan="9" class="py-3 px-6 text-center">Data tidak ditemukan</td>
+                    <td colspan="8" class="py-3 px-6 text-center">Data tidak ditemukan</td>
                 </tr>
                 `;
                     } else {
@@ -49,15 +44,14 @@
                             }
 
                             const detailRouteBase =
-                                "{{ route('admin.transactions.show', ['transaction' => 'REPLACE_ID']) }}";
+                                "{{ route('user.paymentHistory.show', ['transaction' => 'REPLACE_ID']) }}";
                             const href = detailRouteBase.replace('REPLACE_ID', transaction
                                 .id);
 
                             rows += `
                         <tr class="border hover:bg-gray-100">
                               <td class="px-6 py-4 whitespace-nowrap hidden sm:table-cell">${transaction.booking_group_id}</td>
-                              <td class="px-6 py-4 whitespace-nowrap">${transaction.booking_group?.user?.name ?? '-'}</td>
-                              <td class="px-6 py-4 whitespace-nowrap hidden sm:table-cell">${transaction.paid_at ?? '-'}</td>
+                              <td class="px-6 py-4 whitespace-nowrap">${transaction.paid_at ?? '-'}</td>
                               <td class="px-6 py-4 whitespace-nowrap hidden sm:table-cell">${transaction.midtrans_order_id}</td>
                               <td class="px-6 py-4 whitespace-nowrap hidden sm:table-cell">${transaction.payment_type}</td>
                               <td class="px-6 py-4 whitespace-nowrap hidden sm:table-cell">${formatRupiah(transaction.amount)}</td>
@@ -77,7 +71,6 @@
                               <td colspan="6" class="px-6 py-4">
                                   <div>
                                       <p><strong>Id:</strong> ${transaction.booking_group_id}</p>
-                                      <p><strong>Nama:</strong> ${transaction.booking_group?.user?.name ?? '-'}</p>
                                       <p><strong>Tanggal Pembayaran:</strong> ${transaction.paid_at ?? '-'}</p>
                                       <p><strong>Order Id:</strong> ${transaction.midtrans_order_id}</p>
                                       <p><strong>Metode Pembayaran:</strong> ${transaction.payment_type}</p>
@@ -111,7 +104,7 @@
         $('#search').on('keyup', function() {
             searchQuery = $(this).val();
             page = 1;
-            fetchtransactions(page, searchQuery, period, startDate, endDate);
+            fetchtransactions(page, searchQuery);
         });
 
         function generatePaginationButtons(page, lastPage) {
@@ -144,31 +137,11 @@
 
         $(document).on('click', '.pagination-btn', function() {
             page = parseInt($(this).data('page'));
-            fetchtransactions(page, searchQuery, period, startDate, endDate);
+            fetchtransactions(page, searchQuery);
         });
 
         $(window).on('resize', function() {
-            generatePaginationButtons(page, searchQuery, period, startDate, endDate);
-        });
-
-        $('#period').on('change', function() {
-            period = $(this).val();
-            if (period === 'custom') {
-                $('.custom').removeClass('hidden');
-            } else {
-                $('.custom').addClass('hidden');
-                $('#start_date, #end_date').val('');
-                startDate = '';
-                endDate = '';
-            }
-            page = 1;
-            fetchtransactions(page, searchQuery, period, startDate, endDate);
-        });
-
-        $('#start_date, #end_date').on('change', function() {
-            startDate = $('#start_date').val();
-            endDate = $('#end_date').val();
-            fetchtransactions(page, searchQuery, period, startDate, endDate);
+            generatePaginationButtons(page, lastPage);
         });
     });
 </script>

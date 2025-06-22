@@ -7,14 +7,24 @@
             </div>
             <p class="text-sm md:text-base mt-2">Booking</p>
         </a>
-        <a href="" class="flex-col items-center gap-2 hover:text-gray-800 font-semibold">
-            <div
-                class="bg-[#1C3F3A] hover:bg-[#2a5e56] transition-all ease-in-out duration-300 text-white rounded-lg shadow-lg p-4 flex items-center gap-3 w-30 h-30 md:w-52 justify-center hover:shadow-xl">
-                <x-icons.history class="w-6 h-6"></x-icons.history>
-            </div>
-            <p class="text-sm md:text-base mt-2">Riwayat</p>
-        </a>
-        <a href="#jadwal" class="flex-col items-center gap-2 font-semibold">
+        @if (auth()->user()?->hasRole('Kasir'))
+            <a href="{{ route('admin.dashboard') }}" class="flex-col items-center gap-2 hover:text-gray-800 font-semibold">
+                <div
+                    class="bg-[#1C3F3A] hover:bg-[#2a5e56] transition-all ease-in-out duration-300 text-white rounded-lg shadow-lg p-4 flex items-center gap-3 w-30 h-30 md:w-52 justify-center hover:shadow-xl">
+                    <x-icons.dashboard class="w-6 h-6"></x-icons.dashboard>
+                </div>
+                <p class="text-sm md:text-base mt-2">Dashboard</p>
+            </a>
+        @else
+            <a href="{{ route('paymentHistory') }}" class="flex-col items-center gap-2 hover:text-gray-800 font-semibold">
+                <div
+                    class="bg-[#1C3F3A] hover:bg-[#2a5e56] transition-all ease-in-out duration-300 text-white rounded-lg shadow-lg p-4 flex items-center gap-3 w-30 h-30 md:w-52 justify-center hover:shadow-xl">
+                    <x-icons.history class="w-6 h-6"></x-icons.history>
+                </div>
+                <p class="text-sm md:text-base mt-2">Riwayat</p>
+            </a>
+        @endif
+        <a href="#turnamen" data-modal-target="popup-modal" data-modal-toggle="popup-modal" class="flex-col items-center gap-2 font-semibold">
             <div
                 class="bg-[#1C3F3A] hover:bg-[#2a5e56] transition-all ease-in-out duration-300 text-white rounded-lg shadow-lg p-4 flex items-center gap-3 w-30 h-30 md:w-52 justify-center hover:shadow-xl">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">

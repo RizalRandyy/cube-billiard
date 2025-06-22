@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PoolTableController;
@@ -18,9 +19,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('users', UserController::class)->middleware('role:Admin');
     Route::resource('pool_tables', PoolTableController::class)->middleware(['role:Admin|Kasir']);
     Route::resource('transactions', TransactionController::class)->middleware(['role:Admin|Kasir']);
+    Route::prefix('report')->name('report.')->group(function(){
+        Route::post('/transactions/export/excel', [ReportController::class, 'exportTransactionsExcel'])->name('transactions.export.excel');
+    });
 });
 
 Route::get('/gallery', [LandingPageController::class, 'gallery'])->name('gallery');
+Route::get('/paymentHistory', [LandingPageController::class,'paymentHistory'])->name('paymentHistory')->middleware(['auth']);
+Route::get('/paymentHistory/show/{transaction}', [LandingPageController::class,'show'])->name('user.paymentHistory.show')->middleware(['auth']);
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -31,20 +37,18 @@ Route::middleware('auth')->group(function () {
     Route::resource('booking_groups', BookingGroupsController::class)->middleware(['role:User|Kasir']);
 });
 
-// Post data ajax
-Route::post('/admin/users/{user}/reset-password', [UserController::class, 'resetPassword'])->name('admin.users.reset-password');
-
 // Route::post('/midtrans/callback', [TransactionController::class, 'handleCallback'])
 //     ->withoutMiddleware([ValidateCsrfToken::class]);
 
 
 // Get data ajax
-Route::get('/users-data', [UserController::class, 'getUsers'])->name('admin.users.data');
+Route::get('/users-data', [UserController::class, 'getUsers'])->name('admin.users.data')->middleware(['role:Admin|Kasir']);
 Route::get('/pool-tables-data', [PoolTableController::class, 'getPoolTables'])->name('admin.poolTables.data');
-Route::get('/transactions-data', [TransactionController::class, 'getTransactions'])->name('admin.transactions.data');
-Route::get('/booked-tables-user-data/{booking_group_id}', [TransactionController::class, 'getBookedTablesUser'])->name('admin.bookedTablesUser.data');
+Route::get('/transactions-data', [TransactionController::class, 'getTransactions'])->name('admin.transactions.data')->middleware(['role:Admin|Kasir']);
+Route::get('/booked-tables-user-data/{booking_group_id}', [TransactionController::class, 'getBookedTablesUser'])->name('admin.bookedTablesUser.data')->middleware(['auth']); //Admin
 
-Route::get('/initiate-transaction', [TransactionController::class, 'initiateTransaction'])->name('initiate-transaction.data');
-Route::post('/update-transaction/{id}', [TransactionController::class, 'updateTransaction'])->name('update-transaction.data');
+Route::get('/initiate-transaction', [TransactionController::class, 'initiateTransaction'])->name('initiate-transaction.data')->middleware(['auth']);
+Route::post('/update-transaction/{id}', [TransactionController::class, 'updateTransaction'])->name('update-transaction.data')->middleware(['auth']);
+Route::get('/payment-history-data', [LandingPageController::class, 'getPaymentHistory'])->name('payment-history.data')->middleware(['auth']); //User
 
 require __DIR__ . '/auth.php';

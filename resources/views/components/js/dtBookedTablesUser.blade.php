@@ -42,11 +42,9 @@
                           <tr id="details-${index}" class="hidden sm:hidden">
                               <td colspan="6" class="px-6 py-4">
                                   <div>
-                                      <p><strong>Id Meja:</strong> ${booking.pool_table_id}</p>
                                       <p><strong>Nama Meja:</strong> ${booking.pool_table?.name ?? '-'}</p>
                                       <p><strong>Tanggal Booking:</strong> ${booking.booking_date}</p>
-                                      <p><strong>Jam Mulai:</strong> ${booking.start_time}</p>
-                                      <p><strong>Jam Selesai:</strong> ${booking.end_time}</p>
+                                      <p><strong>Jam :</strong> ${formatTime(booking.start_time)} - ${formatTime(booking.end_time)}</p>
                                   </div>
                               </td>
                           </tr>

@@ -69,18 +69,42 @@
                     class="mt-5 w-full bg-[#1C3F3A] hover:bg-[#2a5e56] transition-all ease-in-out duration-300 text-white font-semibold py-3 rounded-lg shadow">
                     Lihat Status Pembayaran
                 </button>
-                <a href="">
+                <a href="{{ auth()->user()->hasRole('Kasir') ? route('admin.transactions.index') : route('paymentHistory') }}">
                     <button
                         class="mt-5 w-full bg-[#1C3F3A] hover:bg-[#2a5e56] transition-all ease-in-out duration-300 text-white font-semibold py-3 rounded-lg shadow">
                         Lihat Riwayat
                     </button>
                 </a>
             @else
-                <!-- Lanjutkan Button -->
-                <button id="pay-button"
-                    class="mt-5 w-full bg-[#1C3F3A] hover:bg-[#2a5e56] transition-all ease-in-out duration-300 text-white font-semibold py-3 rounded-lg shadow">
-                    Lanjutkan ke Pembayaran
-                </button>
+                @if (auth()->user()->hasRole('Kasir'))
+                    <!-- Lanjutkan Button -->
+                    <button id="pay-button-2"
+                        class="mt-5 w-full bg-[#1C3F3A] hover:bg-[#2a5e56] transition-all ease-in-out duration-300 text-white font-semibold py-3 rounded-lg shadow">
+                        <div class="flex items-center justify-center gap-3">
+                            <x-spinner
+                                class="spinner-2 hidden inline w-5 h-5 text-gray-200 animate-spin dark:text-gray-600 fill-green-500"></x-spinner>
+                            <p class="btn-text-tf">Transfer</p>
+                        </div>
+                    </button>
+                    <button id="pay-button-3"
+                        class="mt-5 w-full bg-[#1C3F3A] hover:bg-[#2a5e56] transition-all ease-in-out duration-300 text-white font-semibold py-3 rounded-lg shadow">
+                        <div class="flex items-center justify-center gap-3">
+                            <x-spinner
+                                class="spinner-2 hidden inline w-5 h-5 text-gray-200 animate-spin dark:text-gray-600 fill-green-500"></x-spinner>
+                            <p class="btn-text-cash">Tunai</p>
+                        </div>
+                    </button>
+                @else
+                    <!-- Lanjutkan Button -->
+                    <button id="pay-button-1"
+                        class="mt-5 w-full bg-[#1C3F3A] hover:bg-[#2a5e56] transition-all ease-in-out duration-300 text-white font-semibold py-3 rounded-lg shadow">
+                        <div class="flex items-center justify-center gap-3">
+                            <x-spinner
+                                class="spinner-2 hidden inline w-5 h-5 text-gray-200 animate-spin dark:text-gray-600 fill-green-500"></x-spinner>
+                            <p class="btn-text-tf-user">Lanjutkan ke Pembayaran</p>
+                        </div>
+                    </button>
+                @endif
             @endif
         </div>
     </div>
@@ -93,7 +117,18 @@
         <script>
             $(document).ready(function() {
 
-                $('#pay-button').on('click', function() {
+                $('#pay-button-1, #pay-button-2').on('click', function() {
+                    const payBtn2 = $('#pay-button-3');
+                    payBtn2.prop('disabled', true);
+                    payBtn2.addClass('cursor-not-allowed');
+
+                    const payBtn = $(this);
+                    payBtn.prop('disabled', true);
+                    payBtn.addClass('cursor-not-allowed');
+                    payBtn.find('.btn-text-tf').text('Loading...');
+                    payBtn.find('.btn-text-tf-user').text('Loading...');
+                    payBtn.find('.spinner-2').removeClass('hidden');
+
                     $.ajax({
                         url: 'initiate-transaction',
                         method: 'GET',
@@ -117,15 +152,18 @@
                                             data: {
                                                 _token: '{{ csrf_token() }}',
                                                 payment_status: 'paid',
-                                                payment_type: result.payment_type,
-                                                transaction_status: result.transaction_status,
+                                                payment_type: result
+                                                    .payment_type,
+                                                transaction_status: result
+                                                    .transaction_status,
                                             },
                                             success: function(data) {
                                                 console.log(
                                                     'Update data sukses!'
-                                                    );
+                                                );
                                                 console.log(transactionId);
-                                                window.location.reload(); // refresh halaman setelah sukses
+                                                window.location
+                                                    .reload(); // refresh halaman setelah sukses
                                             },
                                             error: function() {
                                                 console.log("error");
@@ -145,6 +183,86 @@
                         },
                         error: function() {
                             console.log('Terjadi kesalahan saat request snap token');
+                        },
+                        complete: () => {
+                            payBtn.prop('disabled', false);
+                            payBtn.find('.btn-text-tf').text('Transfer');
+                            payBtn.find('.btn-text-tf-user').text('Lanjutkan ke Pembayaran');
+                            payBtn.find('.spinner-2').addClass('hidden');
+                            payBtn.removeClass('cursor-not-allowed');
+                            payBtn2.prop('disabled', false);
+                            payBtn2.removeClass('cursor-not-allowed');
+                        }
+                    });
+                });
+
+                $('#pay-button-3').on('click', function() {
+                    const payBtn2 = $('#pay-button-2');
+                    payBtn2.prop('disabled', true);
+                    payBtn2.addClass('cursor-not-allowed');
+
+                    const payBtn = $(this);
+                    payBtn.prop('disabled', true);
+                    payBtn.addClass('cursor-not-allowed');
+                    payBtn.find('.btn-text-cash').text('Loading...');
+                    payBtn.find('.spinner-2').removeClass('hidden');
+
+                    $.ajax({
+                        url: 'initiate-transaction',
+                        method: 'GET',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        success: function(data) {
+                            if (data.transaction) {
+                                const transactionId = data.transaction.id;
+
+                                $.ajax({
+                                    url: `update-transaction/${transactionId}`,
+                                    method: 'POST',
+                                    data: {
+                                        _token: '{{ csrf_token() }}',
+                                        payment_status: 'paid',
+                                        payment_type: 'cash',
+                                        transaction_status: 'settlement',
+                                    },
+                                    success: function(response) {
+                                        console.log(
+                                            'Pembayaran tunai berhasil!'
+                                        );
+                                        Swal.fire({
+                                            title: 'Berhasil!',
+                                            text: 'Pembayaran tunai berhasil dicatat.',
+                                            icon: 'success',
+                                            confirmButtonText: 'OK',
+                                            customClass: {
+                                                confirmButton: 'bg-[#1C3F3A] text-white px-4 py-2 rounded',
+                                            },
+                                            buttonsStyling: false,
+                                        }).then(() => {
+                                            window.location
+                                                .reload();
+                                        });
+                                    },
+                                    error: function() {
+                                        console.log(
+                                            'Gagal update transaksi');
+                                    }
+                                });
+                            } else {
+                                console.log('Gagal inisialisasi transaksi tunai');
+                            }
+                        },
+                        error: function() {
+                            console.log('Gagal inisialisasi transaksi');
+                        },
+                        complete: () => {
+                            payBtn.prop('disabled', false);
+                            payBtn.find('.btn-text-cash').text('Tunai');
+                            payBtn.find('.spinner-2').addClass('hidden');
+                            payBtn.removeClass('cursor-not-allowed');
+                            payBtn2.prop('disabled', false);
+                            payBtn2.removeClass('cursor-not-allowed');
                         }
                     });
                 });
@@ -152,24 +270,7 @@
                 const transaction = @json($transaction);
 
                 $('#status-button').on('click', function() {
-                    Swal.fire({
-                        title: 'Pembayaran Berhasil',
-                        html: `<p class="mb-1 text-base">Status: <strong>${transaction.payment_status ?? '-'}</strong></p>
-                                <p class="mb-1 text-base">Metode: <strong>${transaction.payment_type ?? '-'}</strong></p>
-                                <p class="mb-1 text-base">Total: <strong>Rp ${Number(transaction.amount ?? 0).toLocaleString('id-ID')}</strong></p>`,
-                        icon: 'success',
-                        confirmButtonText: 'Ok',
-                        focusCancel: true,
-                        background: '#fff',
-                        color: '#111827',
-                        customClass: {
-                            popup: 'rounded-xl shadow-lg px-6 py-4',
-                            confirmButton: 'bg-gray-700 hover:bg-gray-500 text-white font-medium px-4 py-2 rounded-lg focus:outline-none mr-5 transtion-all ease-in-out duration-300',
-                            title: 'text-lg font-bold',
-                            htmlContainer: 'text-sm',
-                        },
-                        buttonsStyling: false
-                    });
+                    SwalPaymentInfo(transaction);
                 });
             });
         </script>

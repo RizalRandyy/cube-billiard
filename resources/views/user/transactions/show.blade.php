@@ -1,32 +1,29 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-start">
-            <div class="flex items-center text-center">
-                <div class="flex items-center gap-4">
-                    <x-button target="" href="{{ route('admin.transactions.index') }}" variant="black" size="sm"
-                        class="justify-center gap-2">
-                        <x-icons.arrow-left class="w-4 h-4" aria-hidden="true" />
-                    </x-button>
-                    <h2 class="font-semibold text-xl leading-tight">
-                        {{ __('Data Booking ' . $bookingGroup->user->name . ' - ') }}
-                    </h2>
-                    @if ($transaction->payment_status === 'failed')
-                        <span
-                            class="bg-red-100 text-red-800 text-base font-medium ms-2 px-2.5 py-0.5 rounded-sm dark:bg-red-900 dark:text-red-300">
-                            {{ $transaction->payment_status }}</span>
-                    @elseif ($transaction->payment_status === 'pending')
-                        <span
-                            class="bg-yellow-100 text-yellow-800 text-base font-medium ms-2 px-2.5 py-0.5 rounded-sm dark:bg-yellow-900 dark:text-yellow-300">{{ $transaction->payment_status }}</span>
-                    @else
-                        <span
-                            class="bg-green-100 text-green-800 text-base font-medium ms-2 px-2.5 py-0.5 rounded-sm dark:bg-green-900 dark:text-green-300">{{ $transaction->payment_status }}</span>
-                    @endif
-                </div>
+<x-guest-layout>
+    <div class="mt-28 flex flex-col gap-4 md:flex-row md:items-center md:justify-start">
+        <div class="mx-6 flex items-center text-center">
+            <div class="flex items-center gap-4">
+                <x-button target="" href="{{ route('paymentHistory') }}" variant="black" size="sm"
+                    class="justify-center gap-2">
+                    <x-icons.arrow-left class="w-4 h-4" aria-hidden="true" />
+                </x-button>
+                <h2 class="font-semibold text-xl leading-tight">
+                    {{ __('Data Booking ' . $bookingGroup->user->name . ' - ') }}
+                </h2>
+                @if ($transaction->payment_status === 'failed')
+                    <span
+                        class="bg-red-100 text-red-800 text-base font-medium ms-2 px-2.5 py-0.5 rounded-sm dark:bg-red-900 dark:text-red-300">
+                        {{ $transaction->payment_status }}</span>
+                @elseif ($transaction->payment_status === 'pending')
+                    <span
+                        class="bg-yellow-100 text-yellow-800 text-base font-medium ms-2 px-2.5 py-0.5 rounded-sm dark:bg-yellow-900 dark:text-yellow-300">{{ $transaction->payment_status }}</span>
+                @else
+                    <span
+                        class="bg-green-100 text-green-800 text-base font-medium ms-2 px-2.5 py-0.5 rounded-sm dark:bg-green-900 dark:text-green-300">{{ $transaction->payment_status }}</span>
+                @endif
             </div>
         </div>
-    </x-slot>
-
-    <div class="p-6 overflow-hidden bg-white rounded-md shadow-md">
+    </div>
+    <div class="mx-6 p-6 mt-4 overflow-hidden bg-white rounded-md shadow-lg">
 
         <div class="flex flex-col md:flex-row md:justify-end gap-4 my-3">
 
@@ -79,4 +76,4 @@
         @include('components.js.dtBookedTablesUser')
     @endpush
 
-</x-app-layout>
+</x-guest-layout>
