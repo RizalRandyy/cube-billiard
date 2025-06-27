@@ -7,7 +7,12 @@
                     <h2 class="text-2xl font-bold text-gray-800 leading-tight">
                         {{ __('Hello, ' . auth()->user()->name . '!') }}
                     </h2>
-                    <p class="text-gray-500 text-sm">Lihat statistik dan kontrol sistem billiard Anda</p>
+                    <p class="text-gray-500 text-sm mb-5">Lihat statistik dan kontrol sistem billiard Anda</p>
+                    @if (auth()->user()->hasRole('Kasir'))
+                        <a href="{{ route('/') }}"
+                            class="bg-[#1C3F3A] text-white hover:bg-[#2a5e56] transition-all ease-in-out duration-300 px-3 py-2 text-sm rounded">Booking
+                            Meja</a>
+                    @endif
                 </div>
                 <div class="md:flex items-center gap-4 hidden">
                     <div class="relative w-64">
