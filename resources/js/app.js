@@ -10,12 +10,15 @@ import Swal from 'sweetalert2';
 import "flatpickr/dist/flatpickr.min.css";
 import { Indonesian } from "flatpickr/dist/l10n/id.js";
 import flatpickr from "flatpickr";
+import Chart from 'chart.js/auto';
 
 import { SwalDeleteUser, SwalResetPasswordUser, SwalDeletePoolTableAdmin, SwalPaymentInfo } from './helpers/swal';
 import { slotsAdminPage } from './pages/admin/pool-table/layout-grid';
 import { formatPricePoolTable } from './helpers/format-price';
 import { normalizeTime } from './helpers/normalize-time';
 import { isTimeOverlap } from './helpers/is-time-overlap';
+
+window.Chart = Chart;
 
 window.Flatpickr = flatpickr;
 

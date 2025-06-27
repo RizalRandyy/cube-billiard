@@ -5,6 +5,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PoolTableController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\TransactionController;
@@ -13,9 +14,7 @@ use App\Http\Controllers\BookingGroupsController;
 Route::get('/', [LandingPageController::class, 'index'])->name('/');
 
 Route::prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard');
-    })->middleware(['role:Admin|Kasir'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['role:Admin|Kasir'])->name('dashboard');
     Route::resource('users', UserController::class)->middleware('role:Admin');
     Route::resource('pool_tables', PoolTableController::class)->middleware(['role:Admin|Kasir']);
     Route::resource('transactions', TransactionController::class)->middleware(['role:Admin|Kasir']);
